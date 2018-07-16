@@ -1,0 +1,13 @@
+extends layout
+block content
+  .row
+  h1 Welcome To The Add Product Page <br><br>
+     .formHold
+       h1.itemtitle Add New Product <br><br>
+             form(method="post")
+               fieldset 
+                 label(for="name") Product Name:
+                 input(name="name", type="text", placeholder="Enter a product Name")
+                 label(for="sport") Sport:
+                 input(name="sport", type="text", placeholder="Enter a sport for this product")
+                 button.button(type="submit") Create New Product

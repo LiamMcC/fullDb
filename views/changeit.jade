@@ -1,0 +1,15 @@
+extends layout
+block content
+   .row
+   h1 Welcome To Edit Product Page <br><br>
+    .formHold 
+      h1.itemtitle Edit Item <br><br>
+        each row in res1
+          p Look at #{row.Name}
+          form(method="post")
+            fieldset
+            label(for="newname") Product Name:
+            input(name="newname" , type="text", value="#{row.Name}")
+            label(for="newprice") Product Price:
+            input(name="newprice" , type="text", value="#{row.Price}")
+            button.button(type="submit") Update #{row.Id}

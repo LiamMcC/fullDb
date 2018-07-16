@@ -1,0 +1,9 @@
+extends layout
+block content
+    .row
+     h1 Welcome to the Category page  <br><br>
+        .grid-container
+            each item in stuff
+              .item 
+                h1.itemtitle #{stuff.Name}
+                

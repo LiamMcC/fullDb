@@ -1,0 +1,16 @@
+extends layout
+block content
+    .row
+     h1 Welcome to the Product page  <br><br>
+        .grid-container
+            each row in res1
+              .item 
+                h1.itemtitle #{row.Name}
+                p.itemp Price: €#{row.Price}
+                p.itemp ID: #{row.Id}
+                a.button(href='showit/#{row.Id}') Show
+                a.button(href='changeit/#{row.Id}') Edit
+                a.button(href='delete/#{row.Name}') Delete Product
+
+
+
