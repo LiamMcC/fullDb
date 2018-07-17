@@ -2,6 +2,9 @@ var express = require("express");
 var app = express();
 
 var bodyParser = require("body-parser");
+var session = require('express-session');
+var passport = require("passport");
+
 var mysql = require('mysql');
 app.use(bodyParser.urlencoded({extended:true}));
 //const db = mysql.createConnection({
@@ -13,12 +16,19 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 //});
 
+app.use(session({secret: 'liam'}));
+
+
+
+
+
+
 const db = mysql.createConnection({
 
   host     : 'den1.mysql1.gear.host',
   user     : 'nci',
   password : 'Yo7A_B09i4?1',
- database:'NCI'
+ database:'nci'
 
 });
 
@@ -33,9 +43,68 @@ db.connect((err) => {
 
 
 
+
+
+
 app.use(express.static("views")); // Allow access to content of views folder
 app.use(express.static("scripts")); // Allow access to scripts folder
 app.use(express.static("images")); // Allow access to images folder
+
+
+
+
+  app.post('/login', function(req, res) {
+  var whichOne = req.body.username;
+  
+   let sql2 = 'SELECT password FROM user WHERE name= "'+whichOne+'"'
+   let query = db.query(sql2, (err, res2) => {
+    if(err) throw err;
+    console.log(res2);
+    
+    var passx= res2[0].password
+    console.log("You logged in with " + passx);
+    req.session.email = passx;
+  
+    if(passx == "Password"){
+    console.log("Logged in with: " + passx);
+    
+   res.redirect("/db");
+   
+  }
+   //res.render("index.jade");
+    //res.render("showit.jade", {res1,res2});
+  });
+ 
+  });
+
+
+
+
+
+app.get('/testquery', function(req, res) {
+  let sql = 'SELECT * FROM user'
+ // let sql = 'SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE="BASE TABLE"' // this lists all tables 
+  let query = db.query(sql, (err, res) => {
+    if(err) throw err;
+    console.log(res);
+    
+    
+  });
+  res.send("Well done liam...");
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // SQL create table Example
@@ -51,6 +120,36 @@ app.get('/create', function(req, res) {
   });
 
 // End SQL create table Example
+
+
+// SQL create user table Example
+app.get('/createuserdb', function(req, res) {
+  let sql = 'CREATE TABLE user ( id int NOT NULL AUTO_INCREMENT PRIMARY KEY, name varchar(255), password varchar(255));'
+  let query = db.query(sql, (err, res) => {
+    if(err) throw err;
+    console.log(res);
+    
+    
+  });
+  res.send("Well done liam users created...");
+  });
+
+// End SQL create table Example
+
+
+// create a user
+app.get('/insertuser', function(req, res) {
+  let sql = 'INSERT INTO user (name, password) VALUES ("Liam", "Password")'
+  let query = db.query(sql, (err, res) => {
+    if(err) throw err;
+    console.log(res);
+    
+    
+  });
+  res.send("Well done liam...");
+  });
+
+
 
 // SQL Select Example
 app.get('/select', function(req, res) {
@@ -138,9 +237,9 @@ app.get('/db', function(req, res) {
   let query = db.query(sql, (err, res1) => {
     if(err) throw err;
     console.log(res1);
-    
+   // console.log(logged);
     // res.send(res1);
- //   console.log(res1)
+    console.log("The Session is " + req.session.email)
 //rows = res1; // this is the info passed to the page 
     res.render("db.jade", {res1});
   });
@@ -168,10 +267,14 @@ app.get('/', function(req, res) {
 
 
 // SQL insert stuff Example
-app.get('/addit', function(req, res) {
-  
+app.get('/addit', function(req, res, next) {
+  if (req.session.email == "Password"){
 
   res.render("addit.jade");
+  console.log("you are authorised")
+}
+else
+res.render("login.jade");
   });
 
 // End SQL Insert Example
@@ -187,7 +290,7 @@ app.post('/addit', function(req, res) {
     if(err) throw err;
     console.log(res);    
     console.log(name);    
-    console.log(sport);
+   // console.log(sport);
 
 
     
@@ -249,6 +352,32 @@ app.post('/changeit/:id', function(req, res) {
 
 // Now we redirect to the db page when the product updates
 
+// Delete
+
+app.get('/deleteit/:id', function(req, res) {
+  var whichOne = req.params.id;
+  let sql = 'DELETE FROM stuff WHERE Id = "'+whichOne+'"'
+  let query = db.query(sql, (err, res) => {
+    if(err) throw err;
+    console.log(res);    
+       
+    console.log("id " + whichOne);
+
+
+
+    
+    
+  });
+
+  // Now we redirect to the db page when the product updates
+ res.redirect("/db");
+  
+ 
+
+  });
+
+// Now we redirect to the db page when the product updates
+
 
 
 // Function to render the individual item
@@ -276,8 +405,45 @@ app.get('/showit/:id', function(req, res){
 // Function to render the  individual item
 
 
+
+
+
+
+
+// Login functions 
+
+// render login view
+
+app.get('/login', function(req, res) {
+  res.render("login.jade");
+  console.log("login page now rendered");
+  
+let sql2 = 'SELECT password FROM user WHERE name= "Liam"'
+  let query = db.query(sql2, (err, res2) => {
+    if(err) throw err;
+    console.log(res2);
+
+    //res.render("showit.jade", {res1,res2});
+  });
+ 
+  });
+  
+  
+  
+
+  
+  
+// app.post("/login", passport.authenticate('local', {
+//   successRedirect: '/',
+//   failureRedirect: '/db'
+// }));
+
+
 app.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
   console.log("Yippee its running");
   
 })
 
+
+
+// res.redirect("/db");
