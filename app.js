@@ -260,11 +260,17 @@ app.get('/showit/:id', function(req, res){
     if(err) throw err;
     console.log(res1);
     
+    
+    
+    let sql2 = 'SELECT * FROM reviews'
+  let query = db.query(sql2, (err, res2) => {
+    if(err) throw err;
+    console.log(res2);
 
-    res.render("showit.jade", {res1});
+    res.render("showit.jade", {res1,res2});
   });
   
- 
+  });
   });
 
 // Function to render the  individual item

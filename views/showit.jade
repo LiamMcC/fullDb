@@ -7,3 +7,18 @@ block content
                 h1.itemtitle #{row.Name}
                 p.itemp Price: €#{row.Price}
                 
+        .p Reviews
+            each row in res2
+              .item 
+                h1.itemtitle #{row.pName}
+                p.itemp Price: €#{row.Name}
+                
+       .formHold
+       h1.itemtitle Leave a Review <br><br>
+             form(method="post")
+               fieldset 
+                 label(for="name") Product Name:
+                 input(name="name", type="text", placeholder="Enter a product Name")
+                 label(for="sport") Sport:
+                 input(name="sport", type="text", placeholder="Enter a sport for this product")
+                 button.button(type="submit") Create New Product              
